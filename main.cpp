@@ -6,7 +6,7 @@
 #include <map>
 using namespace std;
 
-
+//make person object here
 class Graph
 {
 private:
