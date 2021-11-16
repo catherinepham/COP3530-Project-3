@@ -34,6 +34,7 @@ private:
 public:
     void insertEdge(Person from, Person to);
     void printGraph();
+    ector<string> DepthFirstSearch(Person from, string company);
     vector<string> BreadthFirstSearch(Person from, string company);
     int getSize();
     Person findKey(string name, string company);
@@ -61,6 +62,35 @@ void Graph::printGraph()
         }
         cout << endl;
     }*/
+}
+
+vector<string> Graph:: DepthFirstSearch(Person from, string company)
+{
+    vector<string> connectionsPath;
+    set<Person> visited;
+    stack<Person> s;
+
+    visited.insert(from);
+    s.push(from);
+
+    while(!s.empty())
+    {
+        Person person1 = s.top();
+        //cout << person1.name << " " << person1.company << endl;
+        connectionsPath.push_back(person1.name);
+        s.pop();
+
+        vector<Person> connections = graph[from];
+        for(Person v: connections)
+        {
+            if(visited.count(v) == 0)
+            {
+                visited.insert(v);
+                s.push(v);
+            }
+        }
+    }
+    return connectionsPath;
 }
 
 vector<string> Graph::BreadthFirstSearch(Person from, string company) {
@@ -174,6 +204,7 @@ int main()
         }
         else if(menuNum == 3)
         {
+            //do we want to give them the option of using bfs or dfs?
             string name;
             string company;
             string targetCompany;
