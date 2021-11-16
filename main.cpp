@@ -4,7 +4,9 @@
 #include<vector>
 #include <set>
 #include <map>
+#include<fstream>
 using namespace std;
+
 
 struct Person {
     string name;
@@ -15,6 +17,10 @@ struct Person {
         name = _name;
         company = _company;
     }
+
+    bool operator<(const Person &ob) const {
+        return name < ob.name || (name == ob.name && company < ob.company);
+    }
 };
 
 class Graph
@@ -23,13 +29,16 @@ private:
     map<Person, vector<Person>> graph;
 
 public:
-    void insertEdge(string from, string to);
+    void insertEdge(Person from, Person to);
     void printGraph();
 };
 
-//insertEdge() adds a new edge between the from and to vertex.
-void Graph::insertEdge(string from, string to) {
 
+//insertEdge() adds a new edge between the from and to vertex.
+void Graph::insertEdge(Person from, Person to) {
+    //has to be a doubly directed graph because the connections all go 2 ways
+    graph[from].push_back(to);
+    graph[to].push_back(from);
 }
 
 void Graph::printGraph()
@@ -46,8 +55,60 @@ void Graph::printGraph()
     }*/
 }
 
-int main()
-{
+int main() {
+    Graph graph;
+    vector<Person> people;
+    string filePath= "Camille Linkedin.csv";
+    ifstream File(filePath);
+    if(File.is_open())
+    {
+        string lineFromFile;
+        while(getline(File, lineFromFile))
+        {
+            istringstream stream(lineFromFile); //stream of data coming from a string
+
+            string name;
+            string company;
+            string connectionFirst;
+            string connectionLast;
+            string connectionCompany;
+
+            getline(stream, name, ',');
+            getline(stream, company, ',');
+            getline(stream, connectionFirst, ',');
+            getline(stream, connectionLast, ',');
+            getline(stream, connectionCompany, ',');
+
+            string connectionName= connectionFirst+ " " + connectionLast;
+
+            bool found1= false;
+            bool found2= false;
+            for(int i=0; i<people.size(); i++)
+            {
+                if(people.at(i).name==name && people.at(i).company== company)
+                {
+                    found1 = true;
+                }
+                if(people.at(i).name==connectionName && people.at(i).company== connectionCompany)
+                {
+                    found2 = true;
+                }
+            }
+            Person person1= Person(name,company);
+            if(!found1)
+            {
+                people.push_back(person1);
+            }
+            Person connection= Person(connectionName, connectionCompany);
+            if(!found2)
+            {
+                people.push_back(connection);
+            }
+
+            graph.insertEdge(person1, connection);
+        }
+    }
+
 
     return 0;
 }
