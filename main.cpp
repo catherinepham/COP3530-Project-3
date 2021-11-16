@@ -8,8 +8,7 @@
 #include<queue>
 using namespace std;
 
-
-struct Person 
+struct Person
 {
     string name;
     string company;
@@ -21,7 +20,7 @@ struct Person
         company = _company;
     }
 
-    bool operator<(const Person &ob) const 
+    bool operator<(const Person &ob) const
     {
         return name < ob.name || (name == ob.name && company < ob.company);
     }
@@ -37,11 +36,12 @@ public:
     void printGraph();
     vector<string> BreadthFirstSearch(Person from, string company);
     int getSize();
+    Person findKey(string name, string company);
 };
 
 
 //insertEdge() adds a new edge between the from and to vertex.
-void Graph::insertEdge(Person from, Person to) 
+void Graph::insertEdge(Person from, Person to)
 {
     //has to be a doubly directed graph because the connections all go 2 ways
     //check for connections inserted twice because of doubly directed
@@ -73,7 +73,7 @@ vector<string> Graph::BreadthFirstSearch(Person from, string company) {
 
     while(!q.empty()){
         Person person1 = q.front();
-        cout << person1.name << " " << person1.company << endl;
+        //cout << person1.name << " " << person1.company << endl;
         connectionsPath.push_back(person1.name);
         q.pop();
 
@@ -92,38 +92,23 @@ int Graph::getSize() {
     return graph.size();
 }
 
-int main() 
+Person Graph::findKey(string name, string company) {
+    auto itr = graph.find(Person(name,company));
+    return itr->first;
+}
+
+int main()
 {
     int lines = 0;
-        int menuNum = 0;
-        cout << "Welcome to LinkedIn Network" << endl;
-        cout << "Please enter the amount of commands" << endl;
-        cin >> lines;
-        cout << "Please select one of the options below" << endl;
-        cout << "1. Load connections" << endl << "2. Insert a connection" << endl;
-        cout << "3. Search for a company in the network" << endl;
-        cin >> menuNum;
+    int menuNum = 0;
+    cout << "Welcome to LinkedIn Network" << endl;
+    cout << "Please enter the amount of commands" << endl;
+    cin >> lines;
+    cout << "Please select one of the options below" << endl;
+    cout << "1. Load connections" << endl << "2. Insert a connection" << endl;
+    cout << "3. Search for a company in the network" << endl;
+    cin >> menuNum;
 
-        for(int i = 0; i < lines; i++)
-        {
-            if(menuNum == 1)
-            {
-
-            }
-            else if(menuNum == 2)
-            {
-
-            }
-            else if(menuNum == 3)
-            {
-
-            }
-            else
-            {
-                cout << "Invalid input" << endl;
-            }
-
-        }
     Graph graph;
     vector<Person> people;
     string filePath = "Camille Linkedin.csv";
@@ -177,6 +162,41 @@ int main()
         }
     }
 
+    for(int i = 0; i < lines; i++)
+    {
+        if(menuNum == 1)
+        {
 
+        }
+        else if(menuNum == 2)
+        {
+
+        }
+        else if(menuNum == 3)
+        {
+            string name;
+            string company;
+            string targetCompany;
+            string empty;
+            cout << "Who's network are you looking at?" << endl;
+            getline(cin, empty);
+            getline(cin, name);
+            cout << "Where do they work?" << endl;
+            getline(cin, company);
+            Person from = Person(name, company);
+            cout << "What company are looking for?" << endl;
+            getline(cin, targetCompany);
+            vector<string> connections = graph.BreadthFirstSearch(from, targetCompany);
+            cout << "Your path of connections to " << targetCompany << ": " << endl;
+            for (auto i: connections) {
+                cout << i << endl;
+            }
+        }
+        else
+        {
+            cout << "Invalid input" << endl;
+        }
+
+    }
     return 0;
 }
