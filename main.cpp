@@ -8,17 +8,20 @@
 using namespace std;
 
 
-struct Person {
+struct Person 
+{
     string name;
     string company;
 
     //constructor
-    Person(string _name, string _company){
+    Person(string _name, string _company)
+    {
         name = _name;
         company = _company;
     }
 
-    bool operator<(const Person &ob) const {
+    bool operator<(const Person &ob) const 
+    {
         return name < ob.name || (name == ob.name && company < ob.company);
     }
 };
@@ -35,15 +38,17 @@ public:
 
 
 //insertEdge() adds a new edge between the from and to vertex.
-void Graph::insertEdge(Person from, Person to) {
+void Graph::insertEdge(Person from, Person to) 
+{
     //has to be a doubly directed graph because the connections all go 2 ways
+    //check for connections inserted twice because of doubly directed
     graph[from].push_back(to);
     graph[to].push_back(from);
 }
 
 void Graph::printGraph()
 {
-    //TODO: printGraph() prints the graph in a format sorted by ascending vertex matrix of weights
+    //algorithm for traversing
     /*for(auto i: graph)
     {
         cout << i.first;
@@ -55,10 +60,41 @@ void Graph::printGraph()
     }*/
 }
 
-int main() {
+int main() 
+{
+    int lines = 0;
+        int menuNum = 0;
+        cout << "Welcome to LinkedIn Network" << endl;
+        cout << "Please enter the amount of commands" << endl;
+        cin >> lines;
+        cout << "Please select one of the options below" << endl;
+        cout << "1. Load connections" << endl << "2. Insert a connection" << endl;
+        cout << "3. Search for a company in the network" << endl;
+        cin >> menuNum;
+
+        for(int i = 0; i < lines; i++)
+        {
+            if(menuNum == 1)
+            {
+
+            }
+            else if(menuNum == 2)
+            {
+
+            }
+            else if(menuNum == 3)
+            {
+
+            }
+            else
+            {
+                cout << "Invalid input" << endl;
+            }
+
+        }
     Graph graph;
     vector<Person> people;
-    string filePath= "Camille Linkedin.csv";
+    string filePath = "Camille Linkedin.csv";
     ifstream File(filePath);
     if(File.is_open())
     {
@@ -79,17 +115,17 @@ int main() {
             getline(stream, connectionLast, ',');
             getline(stream, connectionCompany, ',');
 
-            string connectionName= connectionFirst+ " " + connectionLast;
+            string connectionName = connectionFirst+ " " + connectionLast;
 
             bool found1= false;
             bool found2= false;
             for(int i=0; i<people.size(); i++)
             {
-                if(people.at(i).name==name && people.at(i).company== company)
+                if(people.at(i).name == name && people.at(i).company == company)
                 {
                     found1 = true;
                 }
-                if(people.at(i).name==connectionName && people.at(i).company== connectionCompany)
+                if(people.at(i).name ==c onnectionName && people.at(i).company == connectionCompany)
                 {
                     found2 = true;
                 }
