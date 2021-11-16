@@ -34,6 +34,8 @@ private:
 public:
     void insertEdge(Person from, Person to);
     void printGraph();
+    vector<string> BreadthFirstSearch(Person from, string company);
+    int getSize();
 };
 
 
@@ -58,6 +60,35 @@ void Graph::printGraph()
         }
         cout << endl;
     }*/
+}
+
+vector<string> Graph::BreadthFirstSearch(Person from, string company) {
+    vector<string> connectionsPath;
+    set<Person> visited;
+    queue<Person> q;
+
+    visited.insert(from);
+    q.push(from);
+
+    while(!q.empty()){
+        Person person1 = q.front();
+        cout << person1.name << " " << person1.company << endl;
+        connectionsPath.push_back(person1.name);
+        q.pop();
+
+        vector<Person> connections = graph[from];
+        for (Person v: connections) {
+            if(visited.count(v)==0) {
+                visited.insert(v);
+                q.push(v);
+            }
+        }
+    }
+    return connectionsPath;
+}
+
+int Graph::getSize() {
+    return graph.size();
 }
 
 int main() 
