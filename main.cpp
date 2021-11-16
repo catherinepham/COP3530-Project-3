@@ -125,7 +125,7 @@ int main()
                 {
                     found1 = true;
                 }
-                if(people.at(i).name ==c onnectionName && people.at(i).company == connectionCompany)
+                if(people.at(i).name == connectionName && people.at(i).company == connectionCompany)
                 {
                     found2 = true;
                 }
