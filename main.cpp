@@ -37,7 +37,6 @@ public:
     ector<string> DepthFirstSearch(Person from, string company);
     vector<string> BreadthFirstSearch(Person from, string company);
     int getSize();
-    Person findKey(string name, string company);
 };
 
 
@@ -120,11 +119,6 @@ vector<string> Graph::BreadthFirstSearch(Person from, string company) {
 
 int Graph::getSize() {
     return graph.size();
-}
-
-Person Graph::findKey(string name, string company) {
-    auto itr = graph.find(Person(name,company));
-    return itr->first;
 }
 
 int main()
