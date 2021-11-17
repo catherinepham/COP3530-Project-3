@@ -81,6 +81,11 @@ vector<string> Graph:: DepthFirstSearch(Person from, string company)
         //cout << person1.name << " " << person1.company << endl;
         connectionsPath.push_back(person1.name);
         s.pop();
+        
+        if(person1.company == company)
+        {
+            return connectionsPath;
+        }
 
         vector<Person> connections = graph[from];
         for(Person v: connections)
