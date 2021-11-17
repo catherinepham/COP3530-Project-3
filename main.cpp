@@ -36,7 +36,6 @@ private:
 
 public:
     void insertEdge(Person from, Person to);
-    void printGraph();
     vector<string> DepthFirstSearch(Person from, string company);
     vector<string> BreadthFirstSearch(Person from, string company);
     bool insertConnection(Person from, Person to);
@@ -50,20 +49,6 @@ void Graph::insertEdge(Person from, Person to)
     //check for connections inserted twice because of doubly directed
     graph[from].push_back(to);
     graph[to].push_back(from);
-}
-
-void Graph::printGraph()
-{
-    //algorithm for traversing
-    /*for(auto i: graph)
-    {
-        cout << i.first;
-        for(int k = 0; k < i.second.size(); k++)
-        {
-            cout << " " << i.second[k].first;
-        }
-        cout << endl;
-    }*/
 }
 
 vector<string> Graph:: DepthFirstSearch(Person from, string company)
