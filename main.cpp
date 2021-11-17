@@ -34,9 +34,8 @@ private:
 public:
     void insertEdge(Person from, Person to);
     void printGraph();
-    ector<string> DepthFirstSearch(Person from, string company);
+    vector<string> DepthFirstSearch(Person from, string company);
     vector<string> BreadthFirstSearch(Person from, string company);
-    int getSize();
 };
 
 
@@ -106,6 +105,10 @@ vector<string> Graph::BreadthFirstSearch(Person from, string company) {
         connectionsPath.push_back(person1.name);
         q.pop();
 
+        if(person1.company == company) {
+            return connectionsPath;
+        }
+
         vector<Person> connections = graph[from];
         for (Person v: connections) {
             if(visited.count(v)==0) {
@@ -115,10 +118,6 @@ vector<string> Graph::BreadthFirstSearch(Person from, string company) {
         }
     }
     return connectionsPath;
-}
-
-int Graph::getSize() {
-    return graph.size();
 }
 
 int main()
