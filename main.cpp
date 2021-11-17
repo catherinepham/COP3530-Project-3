@@ -6,6 +6,7 @@
 #include <map>
 #include<fstream>
 #include<queue>
+#include<algorithm>
 using namespace std;
 
 struct Person
@@ -24,6 +25,8 @@ struct Person
     {
         return name < ob.name || (name == ob.name && company < ob.company);
     }
+
+
 };
 
 class Graph
@@ -36,6 +39,7 @@ public:
     void printGraph();
     vector<string> DepthFirstSearch(Person from, string company);
     vector<string> BreadthFirstSearch(Person from, string company);
+    bool insertConnection(Person from, Person to);
 };
 
 
@@ -120,6 +124,25 @@ vector<string> Graph::BreadthFirstSearch(Person from, string company) {
     return connectionsPath;
 }
 
+bool Graph::insertConnection(Person from, Person to) {
+    //to check that a connection already exists, find "to" in "graph[from]"
+    bool connection = false;
+    for (int i = 0; i < graph[from].size(); i++) {
+        if (graph[from].at(i).name == to.name && graph[from].at(i).company == to.company) {
+            connection = true;
+            break;
+        }
+    }
+    if (!connection) {
+        insertEdge(from, to);
+        //return true if connection was successfully made
+        return true;
+    }
+    else {//return false if connection already exists
+        return false;
+    }
+}
+
 int main()
 {
     int lines = 0;
@@ -193,7 +216,21 @@ int main()
         }
         else if(menuNum == 2)
         {
-
+            string name1, company1, name2, company2,empty;
+            cout << "What is the name of the first person you want to make a connection with?"<< endl;
+            getline(cin, empty);
+            getline(cin, name1);
+            cout << "What company do they work for?" << endl;
+            getline(cin, company1);
+            cout << "What is the name of the second person you want to make a connection with?"<< endl;
+            getline(cin, name2);
+            cout << "What company do they work for?" << endl;
+            getline(cin, company2);
+            bool insert = graph.insertConnection(Person(name1, company1), Person(name2,company2));
+            if (insert)
+                cout << "Connection successfully made" << endl;
+            else
+                cout << "Connection already exists" << endl;
         }
         else if(menuNum == 3)
         {
