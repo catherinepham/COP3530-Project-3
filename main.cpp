@@ -105,13 +105,21 @@ vector<string> Graph::BreadthFirstSearch(Person from, string company) {
 
         vector<Person> connections = graph[from];
         for (Person v: connections) {
+            //accessing a person in the connections' connections
+            /*if(graph[v].size() > 0){
+                vector<string> temp = BreadthFirstSearch(v, company);
+                if (temp.size() > 0) {
+
+                }
+            }*/
             if(visited.count(v)==0) {
                 visited.insert(v);
                 q.push(v);
             }
         }
     }
-    return connectionsPath;
+    vector<string> empty;
+    return empty;
 }
 
 bool Graph::insertConnection(Person from, Person to) {
