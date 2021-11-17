@@ -157,7 +157,7 @@ int main()
 
     Graph graph;
     vector<Person> people;
-    string filePath = "Camille Linkedin.csv";
+    string filePath= "Duplicate.csv";
     ifstream File(filePath);
     if(File.is_open())
     {
@@ -176,19 +176,28 @@ int main()
             getline(stream, company, ',');
             getline(stream, connectionFirst, ',');
             getline(stream, connectionLast, ',');
-            getline(stream, connectionCompany, ',');
+            getline(stream, connectionCompany);
 
-            string connectionName = connectionFirst+ " " + connectionLast;
+            string connectionName= connectionFirst+ " " + connectionLast;
+            connectionCompany= connectionCompany.erase(connectionCompany.size() - 1);
+            if(connectionName[connectionName.size()-1]== ' ')
+            {
+                connectionName= connectionName.erase(connectionName.size()-1);
+            }
+            if(name[name.size()-1]== ' ')
+            {
+                name= name.erase(name.size()-1);
+            }
 
             bool found1= false;
             bool found2= false;
             for(int i=0; i<people.size(); i++)
             {
-                if(people.at(i).name == name && people.at(i).company == company)
+                if(people.at(i).name==name && people.at(i).company== company)
                 {
                     found1 = true;
                 }
-                if(people.at(i).name == connectionName && people.at(i).company == connectionCompany)
+                if(people.at(i).name==connectionName && people.at(i).company== connectionCompany)
                 {
                     found2 = true;
                 }
