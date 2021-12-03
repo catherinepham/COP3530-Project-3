@@ -5,6 +5,7 @@
 #include <set>
 #include <map>
 #include<fstream>
+#include <stack>
 #include<queue>
 #include<algorithm>
 using namespace std;
@@ -39,7 +40,31 @@ public:
     vector<string> DepthFirstSearch(Person from, string company);
     vector<string> BreadthFirstSearch(Person from, string company);
     bool insertConnection(Person from, Person to);
+    void printConnections(Person from);
 };
+
+
+void Graph::printConnections(Person from)
+{
+    if(graph[from].size()== 0)
+    {
+        cout<< "This person doesn't exist in the network"<< endl;
+        return;
+    }
+
+    for(int i=0; i<graph[from].size(); i++)
+    {
+        cout<< graph[from].at(i).name<< endl;
+        if(graph[from].at(i).company!= "")
+        {
+            cout<< graph[from].at(i).company<<endl;
+        }
+
+        cout<< endl;
+    }
+    return;
+}
+
 
 
 //insertEdge() adds a new edge between the from and to vertex.
@@ -66,7 +91,7 @@ vector<string> Graph:: DepthFirstSearch(Person from, string company)
         //cout << person1.name << " " << person1.company << endl;
         connectionsPath.push_back(person1.name);
         s.pop();
-        
+
         if(person1.company == company)
         {
             return connectionsPath;
@@ -109,7 +134,6 @@ vector<string> Graph::BreadthFirstSearch(Person from, string company) {
             /*if(graph[v].size() > 0){
                 vector<string> temp = BreadthFirstSearch(v, company);
                 if (temp.size() > 0) {
-
                 }
             }*/
             if(visited.count(v)==0) {
@@ -149,17 +173,20 @@ int main()
     cout << "Please enter the amount of commands" << endl;
     cin >> lines;
     cout << "Please select one of the options below" << endl;
-    cout << "1. Load connections" << endl << "2. Insert a connection" << endl;
+    cout << "1. Load Person's Connection List" << endl << "2. Insert a connection" << endl;
     cout << "3. Search for a company in the network" << endl;
     cin >> menuNum;
 
     Graph graph;
     vector<Person> people;
-    string filePath= "Duplicate.csv";
+    string filePath= "Test1.csv";
     ifstream File(filePath);
+
     if(File.is_open())
     {
         string lineFromFile;
+        getline(File, lineFromFile);
+
         while(getline(File, lineFromFile))
         {
             istringstream stream(lineFromFile); //stream of data coming from a string
@@ -176,6 +203,10 @@ int main()
             getline(stream, connectionLast, ',');
             getline(stream, connectionCompany);
 
+
+
+
+
             string connectionName= connectionFirst+ " " + connectionLast;
             connectionCompany= connectionCompany.erase(connectionCompany.size() - 1);
             if(connectionName[connectionName.size()-1]== ' ')
@@ -186,6 +217,8 @@ int main()
             {
                 name= name.erase(name.size()-1);
             }
+
+
 
             bool found1= false;
             bool found2= false;
@@ -200,9 +233,12 @@ int main()
                     found2 = true;
                 }
             }
+
+            //cout<< "name"<< name<< endl;
             Person person1= Person(name,company);
-            if(!found1)
-            {
+            //name.resize(13);
+            //cout<< name.size()<< name<< endl;
+            if(!found1) {
                 people.push_back(person1);
             }
             Person connection= Person(connectionName, connectionCompany);
@@ -215,11 +251,23 @@ int main()
         }
     }
 
+    //it isn't allowing you to choose a different menu option
     for(int i = 0; i < lines; i++)
     {
         if(menuNum == 1)
         {
+            string name;
+            string company;
+            string targetCompany;
+            string empty;
+            cout << "Who's network are you looking at?" << endl;
+            getline(cin, empty);
+            getline(cin, name);
+            cout << "Where do they work?" << endl;
+            getline(cin, company);
+            Person from = Person(name, company);
 
+            graph.printConnections(from);
         }
         else if(menuNum == 2)
         {
@@ -252,7 +300,7 @@ int main()
             cout << "Where do they work?" << endl;
             getline(cin, company);
             Person from = Person(name, company);
-            cout << "What company are looking for?" << endl;
+            cout << "What company are you looking for?" << endl;
             getline(cin, targetCompany);
             vector<string> connections = graph.BreadthFirstSearch(from, targetCompany);
             cout << "Your path of connections to " << targetCompany << ": " << endl;
