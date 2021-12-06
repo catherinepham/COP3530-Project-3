@@ -174,7 +174,7 @@ int main()
     cin >> lines;
     cout << "Please select one of the options below" << endl;
     cout << "1. Load Person's Connection List" << endl << "2. Insert a connection" << endl;
-    cout << "3. Search for a company in the network" << endl;
+    cout << "3. Search for a company in the network using Breadth First Search" << endl << "4. Search for a company in the network using Depth First Search" << endl;
     cin >> menuNum;
 
     Graph graph;
