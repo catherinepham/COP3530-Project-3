@@ -250,8 +250,7 @@ int main()
             graph.insertEdge(person1, connection);
         }
     }
-
-    //it isn't allowing you to choose a different menu option
+    
     for(int i = 0; i < lines; i++)
     {
         if(menuNum == 1)
@@ -289,7 +288,7 @@ int main()
         }
         else if(menuNum == 3)
         {
-            //do we want to give them the option of using bfs or dfs?
+            //BFS
             string name;
             string company;
             string targetCompany;
@@ -308,11 +307,33 @@ int main()
                 cout << i << endl;
             }
         }
+        else if(menuNum == 4)
+        {
+            //DFS
+            string name;
+            string company;
+            string targetCompany;
+            string empty;
+            cout << "Who's network are you looking at?" << endl;
+            getline(cin, empty);
+            getline(cin, name);
+            cout << "Where do they work?" << endl;
+            getline(cin, company);
+            Person from = Person(name, company);
+            cout << "What company are you looking for?" << endl;
+            getline(cin, targetCompany);
+            vector<string> connections = graph.DepthFirstSearch(from, targetCompany);
+            cout << "Your path of connections to " << targetCompany << ": " << endl;
+            for (auto i: connections)
+            {
+                cout << i << endl;
+            }
+        }
         else
         {
             cout << "Invalid input" << endl;
         }
-
+        cin >> menuNum;
     }
     return 0;
 }
