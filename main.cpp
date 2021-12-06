@@ -8,6 +8,10 @@
 #include <stack>
 #include<queue>
 #include<algorithm>
+#include <SFML/Graphics.hpp>
+#include "TextureManager.h"
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 struct Person
@@ -167,6 +171,40 @@ bool Graph::insertConnection(Person from, Person to) {
 
 int main()
 {
+    
+    
+    ///SFML SECION!!!
+    
+    sf::RenderWindow window(sf::VideoMode(2700, 1600), "Girl Boss, Gatekeep, Graph Functions: Linkedin Connection Analyzer");
+    sf:: Sprite tester(TextureManager::GetTexture("test"));
+    tester.setPosition(1000, 800);
+
+    while(window.isOpen())
+    {
+        sf::Color color(0,0,150,100);
+        window.clear(color);
+
+        sf:: Event event;
+        while (window.pollEvent(event)) {
+            // "close requested" event: we close the window
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        window.draw(tester);
+
+        window.display();
+
+    }
+
+    TextureManager:: Clear();
+
+    
+    
+    
+    ///END OF SFML SECTION!!
+    
+    
     int lines = 0;
     int menuNum = 0;
     cout << "Welcome to LinkedIn Network" << endl;
@@ -250,7 +288,8 @@ int main()
             graph.insertEdge(person1, connection);
         }
     }
-    
+
+    //it isn't allowing you to choose a different menu option
     for(int i = 0; i < lines; i++)
     {
         if(menuNum == 1)
@@ -288,7 +327,7 @@ int main()
         }
         else if(menuNum == 3)
         {
-            //BFS
+            //do we want to give them the option of using bfs or dfs?
             string name;
             string company;
             string targetCompany;
@@ -307,6 +346,7 @@ int main()
                 cout << i << endl;
             }
         }
+
         else if(menuNum == 4)
         {
             //DFS
@@ -334,6 +374,7 @@ int main()
             cout << "Invalid input" << endl;
         }
         cin >> menuNum;
+
     }
     return 0;
 }
