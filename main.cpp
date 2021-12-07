@@ -173,7 +173,7 @@ int main()
 {
     
     
-    ///SFML SECION!!!
+        ///SFML SECION!!!
 
     sf::RenderWindow window(sf::VideoMode(2700, 1600), "Girl Boss, Gatekeep, Graph Functions: Linkedin Connection Analyzer");
     //welcome window
@@ -195,13 +195,6 @@ int main()
         sf::Color white = sf::Color::White;
         window.clear(white);
 
-        sf:: Event event;
-        while (window.pollEvent(event)) {
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
         //welcome window part again
         window.draw(title);
         window.draw(directions);
@@ -210,6 +203,34 @@ int main()
         window.draw(option3);
         window.draw(option4);
 
+        sf:: Event event;
+        while (window.pollEvent(event)) {
+            // "close requested" event: we close the window
+            if (event.type == sf::Event::Closed)
+                window.close();
+            
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) { 
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                auto option1Bounds = option1.getGlobalBounds();
+                auto option2Bounds = option2.getGlobalBounds();
+                auto option3Bounds = option3.getGlobalBounds();
+                auto option4Bounds = option4.getGlobalBounds();
+
+                if (option1Bounds.contains(mousePos.x, mousePos.y)) {
+                
+                }
+                else if (option2Bounds.contains(mousePos.x, mousePos.y)) {
+
+                }
+                else if (option3Bounds.contains(mousePos.x, mousePos.y)) {
+
+                }
+                else if (option4Bounds.contains(mousePos.x, mousePos.y)) {
+
+                }
+            }
+        }
+        
         window.display();
 
     }
