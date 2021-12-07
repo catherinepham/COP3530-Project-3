@@ -25,6 +25,11 @@ struct Person
         name = _name;
         company = _company;
     }
+    Person()
+    {
+        name="";
+        company="";
+    }
 
     bool operator<(const Person &ob) const
     {
@@ -44,27 +49,64 @@ public:
     vector<string> DepthFirstSearch(Person from, string company);
     vector<string> BreadthFirstSearch(Person from, string company);
     bool insertConnection(Person from, Person to);
-    void printConnections(Person from);
+    void printConnections(Person from, sf:: RenderWindow &window);
 };
 
 
-void Graph::printConnections(Person from)
+void Graph::printConnections(Person from, sf:: RenderWindow &window)
 {
+    sf::Font font;
+    font.loadFromFile("Font/arial.ttf");
+    if(!font.loadFromFile("Font/arial.ttf"))
+    {
+        cout<< "ERROR IN FONT" << endl;
+    }
+
+    sf::Text text;
+    text.setFont(font);
+
     if(graph[from].size()== 0)
     {
-        cout<< "This person doesn't exist in the network"<< endl;
+        string message= "This person doesn't exist in the network";
+        text.setString(message);
+        text.setCharacterSize(80);
+        text.setFillColor(sf::Color::White);
+        text.setPosition(200,200);
+        window.draw(text);
+
+
+        //cout<< "This person doesn't exist in the network"<< endl;
         return;
     }
 
+    string message= "This person doesn't exist in the network";
+    text.setString(message);
+    text.setCharacterSize(20);
+    text.setFillColor(sf::Color::White);
+
+
+    int j=0;
+    int m=0;
+
     for(int i=0; i<graph[from].size(); i++)
     {
-        cout<< graph[from].at(i).name<< endl;
-        if(graph[from].at(i).company!= "")
+        string message= graph[from].at(i).name+"-- "+graph[from].at(i).company;
+        text.setString(message);
+        text.setPosition(j,m*22);
+        window.draw(text);
+        if(i!=0 && i%70==0)
+        {
+            j+=700;
+            m=0;
+        }
+        m++;
+        //cout<< graph[from].at(i).name<< endl;
+        /*if(graph[from].at(i).company!= "")
         {
             cout<< graph[from].at(i).company<<endl;
-        }
+        }*/
 
-        cout<< endl;
+        //cout<< endl;
     }
     return;
 }
@@ -171,91 +213,17 @@ bool Graph::insertConnection(Person from, Person to) {
 
 int main()
 {
-    
-    
-        ///SFML SECION!!!
-
-    sf::RenderWindow window(sf::VideoMode(2700, 1600), "Girl Boss, Gatekeep, Graph Functions: Linkedin Connection Analyzer");
-    //welcome window
-        sf:: Sprite title(TextureManager::GetTexture("welcome_title"));
-    title.setPosition(575, 100);
-    title.setScale(2,2);
-    sf:: Sprite directions(TextureManager::GetTexture("directions"));
-    directions.setPosition(630, 400);
-    directions.setScale(2,2);
-    sf:: Sprite option1(TextureManager::GetTexture("option_1"));
-    option1.setPosition(625, 550);
-    option1.setScale(2,2);
-    sf:: Sprite option2(TextureManager::GetTexture("option_2"));
-    option2.setPosition(1430, 550);
-    option2.setScale(2,2);
-    sf:: Sprite option3(TextureManager::GetTexture("option_3"));
-    option3.setPosition(625, 925);
-    option3.setScale(2,2);
-    sf:: Sprite option4(TextureManager::GetTexture("option_4"));
-    option4.setPosition(1430, 925);
-    option4.setScale(2,2);
-
-    while(window.isOpen())
-    {
-        sf::Color white = sf::Color::White;
-        window.clear(white);
-
-        //welcome window part again
-        window.draw(title);
-        window.draw(directions);
-        window.draw(option1);
-        window.draw(option2);
-        window.draw(option3);
-        window.draw(option4);
-
-        sf:: Event event;
-        while (window.pollEvent(event)) {
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
-                window.close();
-            
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) { 
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                auto option1Bounds = option1.getGlobalBounds();
-                auto option2Bounds = option2.getGlobalBounds();
-                auto option3Bounds = option3.getGlobalBounds();
-                auto option4Bounds = option4.getGlobalBounds();
-
-                if (option1Bounds.contains(mousePos.x, mousePos.y)) {
-                
-                }
-                else if (option2Bounds.contains(mousePos.x, mousePos.y)) {
-
-                }
-                else if (option3Bounds.contains(mousePos.x, mousePos.y)) {
-
-                }
-                else if (option4Bounds.contains(mousePos.x, mousePos.y)) {
-
-                }
-            }
-        }
-        
-        window.display();
-
-    }
-
-    TextureManager:: Clear();
 
 
-    ///END OF SFML SECTION!!
-    
-    
-    int lines = 0;
+    int lines = 7;
     int menuNum = 0;
-    cout << "Welcome to LinkedIn Network" << endl;
+    /*cout << "Welcome to LinkedIn Network" << endl;
     cout << "Please enter the amount of commands" << endl;
     cin >> lines;
     cout << "Please select one of the options below" << endl;
     cout << "1. Load Person's Connection List" << endl << "2. Insert a connection" << endl;
     cout << "3. Search for a company in the network using Breadth First Search" << endl << "4. Search for a company in the network using Depth First Search" << endl;
-    cin >> menuNum;
+    cin >> menuNum;*/
 
     Graph graph;
     vector<Person> people;
@@ -331,6 +299,185 @@ int main()
         }
     }
 
+
+    ///SFML SECION!!!
+
+    sf::RenderWindow window(sf::VideoMode(2700, 1600), "Girl Boss, Gatekeep, Graph Functions: Linkedin Connection Analyzer");
+    sf:: Sprite camille(TextureManager::GetTexture("camille4"));
+    camille.setScale(1.43,1.43);
+    camille.setPosition(400, 450);
+
+    sf:: Sprite camilleName(TextureManager::GetTexture("camilleText"));
+    camilleName.setScale(0.6,0.6);
+    camilleName.setPosition(330, 140);
+
+    sf:: Sprite cathy(TextureManager::GetTexture("cathy"));
+    cathy.setPosition(1900, 450);
+
+    sf:: Sprite nathalie(TextureManager::GetTexture("nathalie"));
+    nathalie.setPosition(1150, 450);
+
+    sf:: Sprite nathalieName(TextureManager::GetTexture("nathalieText"));
+    nathalieName.setScale(0.6,0.6);
+    nathalieName.setPosition(1080, 142);
+
+    sf:: Sprite cathyName(TextureManager::GetTexture("cathyText"));
+    cathyName.setScale(0.6,0.6);
+    cathyName.setPosition(1830, 140);
+
+    sf:: Sprite question(TextureManager::GetTexture("question"));
+    //cathyName.setScale(0.6,0.6);
+    question.setPosition(465, 10);
+
+    sf:: Sprite menuButton(TextureManager::GetTexture("menu"));
+    menuButton.setPosition(2520,1500);
+
+    sf:: Sprite title(TextureManager::GetTexture("welcome_title"));
+    title.setPosition(575, 100);
+    title.setScale(2,2);
+    sf:: Sprite directions(TextureManager::GetTexture("directions"));
+    directions.setPosition(630, 400);
+    directions.setScale(2,2);
+    sf:: Sprite option1(TextureManager::GetTexture("option_1"));
+    option1.setPosition(625, 550);
+    option1.setScale(2,2);
+    sf:: Sprite option2(TextureManager::GetTexture("option_2"));
+    option2.setPosition(1430, 550);
+    option2.setScale(2,2);
+    sf:: Sprite option3(TextureManager::GetTexture("option_3"));
+    option3.setPosition(625, 925);
+    option3.setScale(2,2);
+    sf:: Sprite option4(TextureManager::GetTexture("option_4"));
+    option4.setPosition(1430, 925);
+    option4.setScale(2,2);
+
+    int screen=1;
+    int menu=1;
+    Person from;
+
+    while(window.isOpen())
+    {
+        if(screen==1)
+        {
+            window.draw(title);
+            window.draw(directions);
+            window.draw(option1);
+            window.draw(option2);
+            window.draw(option3);
+            window.draw(option4);
+        }
+        if(screen==2)
+        {
+            window.draw(camille);
+            window.draw(nathalie);
+            window.draw(cathy);
+            window.draw(camilleName);
+            window.draw(nathalieName);
+            window.draw(cathyName);
+            window.draw(question);
+        }
+        if(screen==3)
+        {
+            graph.printConnections(from, window);
+            window.draw(menuButton);
+        }
+
+        sf:: Event event;
+        while (window.pollEvent(event)) {
+            // "close requested" event: we close the window
+            if (event.type == sf::Event::Closed)
+                window.close();
+            if (event.type== sf::Event::MouseButtonPressed)
+            {
+                if (event.mouseButton.button == sf::Mouse::Left || event.mouseButton.button == sf::Mouse::Right)
+                {
+                    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+                    auto boundsCamille = camille.getGlobalBounds();
+                    if(boundsCamille.contains(mousePos.x, mousePos.y))
+                    {
+                        from.name= "Camille Eyman";
+                        from.company= "UF Center for Arts in Medicine";
+
+                        if(menu==1)
+                        {
+                            screen=3;
+                        }
+                    }
+
+                    auto boundsNathalie = nathalie.getGlobalBounds();
+                    if(boundsNathalie.contains(mousePos.x, mousePos.y))
+                    {
+                        from.name= "Nathalie Leave";
+                        from.company= "Microsoft";
+
+                        if(menu==1)
+                        {
+                            screen=3;
+                        }
+                    }
+
+                    auto boundsCathy = cathy.getGlobalBounds();
+                    if(boundsCathy.contains(mousePos.x, mousePos.y))
+                    {
+                        from.name= "Catherine Pham";
+                        from.company= "University of Florida";
+                        if(menu==1)
+                        {
+                            screen=3;
+                        }
+                    }
+
+                    auto boundsMenu = menuButton.getGlobalBounds();
+                    if(boundsMenu.contains(mousePos.x, mousePos.y))
+                    {
+                        screen=1;
+                    }
+
+                    auto option1Bounds = option1.getGlobalBounds();
+                    auto option2Bounds = option2.getGlobalBounds();
+                    auto option3Bounds = option3.getGlobalBounds();
+                    auto option4Bounds = option4.getGlobalBounds();
+
+                    if (option1Bounds.contains(mousePos.x, mousePos.y)) {
+                        menu=1;
+                        screen=2;
+                    }
+                    else if (option2Bounds.contains(mousePos.x, mousePos.y)) {
+                        menu=2;
+                        screen=2;
+                    }
+                    else if (option3Bounds.contains(mousePos.x, mousePos.y)) {
+                        menu=3;
+                        screen=2;
+                    }
+                    else if (option4Bounds.contains(mousePos.x, mousePos.y)) {
+                        menu=4;
+                    }
+
+                }
+            }
+
+
+
+
+
+        }
+
+
+        window.display();
+        window.clear();
+
+    }
+
+    TextureManager:: Clear();
+
+
+
+
+    ///END OF SFML SECTION!!
+
+
     //it isn't allowing you to choose a different menu option
     for(int i = 0; i < lines; i++)
     {
@@ -347,7 +494,7 @@ int main()
             getline(cin, company);
             Person from = Person(name, company);
 
-            graph.printConnections(from);
+            graph.printConnections(from, window);
         }
         else if(menuNum == 2)
         {
