@@ -174,15 +174,26 @@ int main()
     
     
     ///SFML SECION!!!
-    
+
     sf::RenderWindow window(sf::VideoMode(2700, 1600), "Girl Boss, Gatekeep, Graph Functions: Linkedin Connection Analyzer");
-    sf:: Sprite tester(TextureManager::GetTexture("test"));
-    tester.setPosition(1000, 800);
+    //welcome window
+    sf:: Sprite title(TextureManager::GetTexture("welcome_title"));
+    title.setPosition(575, 100);
+    sf:: Sprite directions(TextureManager::GetTexture("directions"));
+    directions.setPosition(610, 240);
+    sf:: Sprite option1(TextureManager::GetTexture("option_1"));
+    option1.setPosition(605, 350);
+    sf:: Sprite option2(TextureManager::GetTexture("option_2"));
+    option2.setPosition(1010, 350);
+    sf:: Sprite option3(TextureManager::GetTexture("option_3"));
+    option3.setPosition(605, 525);
+    sf:: Sprite option4(TextureManager::GetTexture("option_4"));
+    option4.setPosition(1010, 525);
 
     while(window.isOpen())
     {
-        sf::Color color(0,0,150,100);
-        window.clear(color);
+        sf::Color white = sf::Color::White;
+        window.clear(white);
 
         sf:: Event event;
         while (window.pollEvent(event)) {
@@ -191,7 +202,13 @@ int main()
                 window.close();
         }
 
-        window.draw(tester);
+        //welcome window part again
+        window.draw(title);
+        window.draw(directions);
+        window.draw(option1);
+        window.draw(option2);
+        window.draw(option3);
+        window.draw(option4);
 
         window.display();
 
@@ -199,9 +216,7 @@ int main()
 
     TextureManager:: Clear();
 
-    
-    
-    
+
     ///END OF SFML SECTION!!
     
     
