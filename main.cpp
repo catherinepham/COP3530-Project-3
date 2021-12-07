@@ -351,7 +351,21 @@ int main()
     option4.setPosition(1430, 925);
     option4.setScale(2,2);
 
-    int screen=1;
+    sf:: Sprite nameInput(TextureManager::GetTexture("nameInput"));
+    nameInput.setPosition(200,570);
+    sf:: Sprite companyInput(TextureManager::GetTexture("companyInput"));
+    companyInput.setPosition(100,870);
+
+    sf:: Sprite titleInput(TextureManager::GetTexture("titleInput"));
+    titleInput.setPosition(320,50);
+
+    sf:: Sprite failed(TextureManager::GetTexture("failed"));
+    failed.setPosition(420,1200);
+
+    sf:: Sprite success(TextureManager::GetTexture("success"));
+    success.setPosition(530,1200);
+
+    int screen=4;
     int menu=1;
     Person from;
 
@@ -366,7 +380,7 @@ int main()
             window.draw(option3);
             window.draw(option4);
         }
-        if(screen==2)
+        else if(screen==2)
         {
             window.draw(camille);
             window.draw(nathalie);
@@ -376,10 +390,20 @@ int main()
             window.draw(cathyName);
             window.draw(question);
         }
-        if(screen==3)
+        else if(screen==3)
         {
             graph.printConnections(from, window);
             window.draw(menuButton);
+        }
+
+        else if(screen==4)
+        {
+            window.draw(nameInput);
+            window.draw(companyInput);
+            window.draw(titleInput);
+            window.draw(failed);
+            window.draw(menuButton);
+
         }
 
         sf:: Event event;
