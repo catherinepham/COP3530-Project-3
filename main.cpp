@@ -177,18 +177,24 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(2700, 1600), "Girl Boss, Gatekeep, Graph Functions: Linkedin Connection Analyzer");
     //welcome window
-    sf:: Sprite title(TextureManager::GetTexture("welcome_title"));
+        sf:: Sprite title(TextureManager::GetTexture("welcome_title"));
     title.setPosition(575, 100);
+    title.setScale(2,2);
     sf:: Sprite directions(TextureManager::GetTexture("directions"));
-    directions.setPosition(610, 240);
+    directions.setPosition(630, 400);
+    directions.setScale(2,2);
     sf:: Sprite option1(TextureManager::GetTexture("option_1"));
-    option1.setPosition(605, 350);
+    option1.setPosition(625, 550);
+    option1.setScale(2,2);
     sf:: Sprite option2(TextureManager::GetTexture("option_2"));
-    option2.setPosition(1010, 350);
+    option2.setPosition(1430, 550);
+    option2.setScale(2,2);
     sf:: Sprite option3(TextureManager::GetTexture("option_3"));
-    option3.setPosition(605, 525);
+    option3.setPosition(625, 925);
+    option3.setScale(2,2);
     sf:: Sprite option4(TextureManager::GetTexture("option_4"));
-    option4.setPosition(1010, 525);
+    option4.setPosition(1430, 925);
+    option4.setScale(2,2);
 
     while(window.isOpen())
     {
