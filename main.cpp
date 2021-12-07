@@ -35,8 +35,6 @@ struct Person
     {
         return name < ob.name || (name == ob.name && company < ob.company);
     }
-
-
 };
 
 class Graph
@@ -51,7 +49,6 @@ public:
     bool insertConnection(Person from, Person to);
     void printConnections(Person from, sf:: RenderWindow &window);
 };
-
 
 void Graph::printConnections(Person from, sf:: RenderWindow &window)
 {
@@ -83,7 +80,6 @@ void Graph::printConnections(Person from, sf:: RenderWindow &window)
     text.setString(message);
     text.setCharacterSize(20);
     text.setFillColor(sf::Color::White);
-
 
     int j=0;
     int m=0;
@@ -227,7 +223,7 @@ int main()
 
     Graph graph;
     vector<Person> people;
-    string filePath= "Test1.csv";
+    string filePath= "MassiveConnections.csv";
     ifstream File(filePath);
 
     if(File.is_open())
@@ -250,10 +246,6 @@ int main()
             getline(stream, connectionFirst, ',');
             getline(stream, connectionLast, ',');
             getline(stream, connectionCompany);
-
-
-
-
 
             string connectionName= connectionFirst+ " " + connectionLast;
             connectionCompany= connectionCompany.erase(connectionCompany.size() - 1);
@@ -365,9 +357,26 @@ int main()
     sf:: Sprite success(TextureManager::GetTexture("success"));
     success.setPosition(530,1200);
 
-    int screen=4;
+    sf::String userInputname;
+    sf::String userInputcompany;
+    sf::Font font;
+    sf::Text nameText("", font, 75);
+    nameText.setFont(font);
+    nameText.setPosition(575,610);
+    nameText.setColor(sf::Color::White);
+    sf::Text companyText("", font, 75);
+    companyText.setFont(font);
+    companyText.setPosition(625,930);
+    companyText.setColor(sf::Color::White);
+
+    int screen=1;
     int menu=1;
     Person from;
+
+    bool nameInputted = false;
+    bool companyInputted = false;
+    bool toInsert = false;
+    int insert = 0;
 
     while(window.isOpen())
     {
@@ -401,9 +410,27 @@ int main()
             window.draw(nameInput);
             window.draw(companyInput);
             window.draw(titleInput);
-            window.draw(failed);
             window.draw(menuButton);
+            window.draw(nameText);
+            window.draw(companyText);
+            if (toInsert) {
+                bool insertVal = graph.insertConnection(from, Person(userInputname,userInputcompany));
+                if (insertVal)
+                    insert = 1;
+                else
+                    insert = 2;
+                toInsert = false;
+            }
+            if (insert == 1)
+                window.draw(success);
+            else if (insert == 2)
+                window.draw(failed);
+        }
 
+        font.loadFromFile("Font/arial.ttf");
+        if(!font.loadFromFile("Font/arial.ttf"))
+        {
+            cout<< "ERROR IN FONT" << endl;
         }
 
         sf:: Event event;
@@ -411,6 +438,33 @@ int main()
             // "close requested" event: we close the window
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type==sf::Event::TextEntered) {
+                if (event.text.unicode < 128) {
+                    if (event.text.unicode == 10 && !nameInputted) {
+                        nameInputted = true;
+                    }
+                    else if(event.text.unicode == 10 && nameInputted && !companyInputted) {
+                        companyInputted = true;
+                    }
+                    else if (!nameInputted && !companyInputted) {
+                        userInputname +=event.text.unicode;
+                        nameText.setString(userInputname);
+                    }
+                    else if (nameInputted && !companyInputted) {
+                        userInputcompany +=event.text.unicode;
+                        companyText.setString(userInputcompany);
+                    }
+                    else if (nameInputted && companyInputted){
+                        toInsert = true;
+                    }
+
+
+                    /*char inputVal = static_cast<char>(event.text.unicode);
+                    cout << inputVal << "it worked";*/
+                }
+            }
+
             if (event.type== sf::Event::MouseButtonPressed)
             {
                 if (event.mouseButton.button == sf::Mouse::Left || event.mouseButton.button == sf::Mouse::Right)
@@ -427,6 +481,9 @@ int main()
                         {
                             screen=3;
                         }
+                        else if (menu==2) {
+                            screen=4;
+                        }
                     }
 
                     auto boundsNathalie = nathalie.getGlobalBounds();
@@ -439,6 +496,9 @@ int main()
                         {
                             screen=3;
                         }
+                        else if (menu==2) {
+                            screen=4;
+                        }
                     }
 
                     auto boundsCathy = cathy.getGlobalBounds();
@@ -449,6 +509,9 @@ int main()
                         if(menu==1)
                         {
                             screen=3;
+                        }
+                        else if (menu==2) {
+                            screen=4;
                         }
                     }
 
@@ -481,14 +544,7 @@ int main()
 
                 }
             }
-
-
-
-
-
         }
-
-
         window.display();
         window.clear();
 
