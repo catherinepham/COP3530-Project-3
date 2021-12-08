@@ -35,12 +35,15 @@ struct Person
     {
         return name < ob.name || (name == ob.name && company < ob.company);
     }
+
+
 };
 
 class Graph
 {
 private:
     map<Person, vector<Person>> graph;
+    map<Person, Person> mp;
 
 public:
     void insertEdge(Person from, Person to);
@@ -48,7 +51,9 @@ public:
     vector<string> BreadthFirstSearch(Person from, string company);
     bool insertConnection(Person from, Person to);
     void printConnections(Person from, sf:: RenderWindow &window);
+    Person BFSHelper(Person from, string company);
 };
+
 
 void Graph::printConnections(Person from, sf:: RenderWindow &window)
 {
@@ -81,6 +86,7 @@ void Graph::printConnections(Person from, sf:: RenderWindow &window)
     text.setCharacterSize(20);
     text.setFillColor(sf::Color::White);
 
+
     int j=0;
     int m=0;
 
@@ -108,6 +114,56 @@ void Graph::printConnections(Person from, sf:: RenderWindow &window)
 }
 
 
+Person Graph::BFSHelper(Person from, string company) {
+    set<Person> visited;
+    queue<Person> q;
+
+    visited.insert(from);
+    q.push(from);
+
+    while(!q.empty()){
+        Person person1 = q.front();
+        q.pop();
+
+        if(person1.company == company) {
+            return person1;
+        }
+
+        vector<Person> connections = graph[person1];
+        for (Person v: connections) {
+            if(visited.count(v)==0) {
+                mp[v] = person1;
+                if(v.company == company) {
+                    return v;
+                }
+                visited.insert(v);
+                q.push(v);
+            }
+        }
+    }
+    Person empty;
+    return empty;
+}
+
+vector<string> Graph::BreadthFirstSearch(Person from, string company) {
+    Person to = BFSHelper(from, company);
+    vector<string> connectionsPath;
+
+    Person prev;
+    Person curr = to;
+    connectionsPath.push_back(to.name);
+    while (prev.name!=from.name && prev.company!=from.company) {
+        prev = mp[curr];
+        connectionsPath.push_back(prev.name);
+        curr = prev;
+        if(curr.name=="" || prev.name=="")
+        {
+            break;
+        }
+    }
+
+    return connectionsPath;
+}
 
 //insertEdge() adds a new edge between the from and to vertex.
 void Graph::insertEdge(Person from, Person to)
@@ -152,41 +208,9 @@ vector<string> Graph:: DepthFirstSearch(Person from, string company)
     return connectionsPath;
 }
 
-vector<string> Graph::BreadthFirstSearch(Person from, string company) {
-    vector<string> connectionsPath;
-    set<Person> visited;
-    queue<Person> q;
 
-    visited.insert(from);
-    q.push(from);
 
-    while(!q.empty()){
-        Person person1 = q.front();
-        //cout << person1.name << " " << person1.company << endl;
-        connectionsPath.push_back(person1.name);
-        q.pop();
 
-        if(person1.company == company) {
-            return connectionsPath;
-        }
-
-        vector<Person> connections = graph[from];
-        for (Person v: connections) {
-            //accessing a person in the connections' connections
-            /*if(graph[v].size() > 0){
-                vector<string> temp = BreadthFirstSearch(v, company);
-                if (temp.size() > 0) {
-                }
-            }*/
-            if(visited.count(v)==0) {
-                visited.insert(v);
-                q.push(v);
-            }
-        }
-    }
-    vector<string> empty;
-    return empty;
-}
 
 bool Graph::insertConnection(Person from, Person to) {
     //to check that a connection already exists, find "to" in "graph[from]"
@@ -213,17 +237,10 @@ int main()
 
     int lines = 7;
     int menuNum = 0;
-    /*cout << "Welcome to LinkedIn Network" << endl;
-    cout << "Please enter the amount of commands" << endl;
-    cin >> lines;
-    cout << "Please select one of the options below" << endl;
-    cout << "1. Load Person's Connection List" << endl << "2. Insert a connection" << endl;
-    cout << "3. Search for a company in the network using Breadth First Search" << endl << "4. Search for a company in the network using Depth First Search" << endl;
-    cin >> menuNum;*/
 
     Graph graph;
     vector<Person> people;
-    string filePath= "MassiveConnections.csv";
+    string filePath= "Test1.csv";
     ifstream File(filePath);
 
     if(File.is_open())
@@ -246,6 +263,10 @@ int main()
             getline(stream, connectionFirst, ',');
             getline(stream, connectionLast, ',');
             getline(stream, connectionCompany);
+
+
+
+
 
             string connectionName= connectionFirst+ " " + connectionLast;
             connectionCompany= connectionCompany.erase(connectionCompany.size() - 1);
@@ -318,8 +339,10 @@ int main()
     cathyName.setPosition(1830, 140);
 
     sf:: Sprite question(TextureManager::GetTexture("question"));
-    //cathyName.setScale(0.6,0.6);
     question.setPosition(465, 10);
+
+    sf:: Sprite insertQ(TextureManager::GetTexture("insertQ"));
+    insertQ.setPosition(550, 10);
 
     sf:: Sprite menuButton(TextureManager::GetTexture("menu"));
     menuButton.setPosition(2520,1500);
@@ -357,6 +380,20 @@ int main()
     sf:: Sprite success(TextureManager::GetTexture("success"));
     success.setPosition(530,1200);
 
+    sf:: Sprite companyAsk(TextureManager::GetTexture("companyAsk"));
+    companyAsk.setPosition(450,700);
+
+    sf:: Sprite pathQ(TextureManager::GetTexture("pathQ"));
+    pathQ.setPosition(410, 40);
+
+    sf:: Sprite border(TextureManager::GetTexture("border"));
+    border.setPosition(510,65);
+
+    int screen=1;
+    int menu=1;
+    int insertResult=0;
+    Person from;
+
     sf::String userInputname;
     sf::String userInputcompany;
     sf::Font font;
@@ -369,14 +406,21 @@ int main()
     companyText.setPosition(625,930);
     companyText.setColor(sf::Color::White);
 
-    int screen=1;
-    int menu=1;
-    Person from;
-
     bool nameInputted = false;
     bool companyInputted = false;
     bool toInsert = false;
     int insert = 0;
+
+    sf::String userInputCompany2;
+    sf::String userText2;
+    sf::Text companyText2("", font, 75);
+    companyText2.setFont(font);
+    companyText2.setPosition(495,850);
+    companyText2.setColor(sf::Color::White);
+    bool finishedComp= false;
+
+
+
 
     while(window.isOpen())
     {
@@ -397,14 +441,20 @@ int main()
             window.draw(camilleName);
             window.draw(nathalieName);
             window.draw(cathyName);
-            window.draw(question);
+            if(menu==2)
+            {
+                window.draw(insertQ);
+            }
+            else
+            {
+                window.draw(question);
+            }
         }
         else if(screen==3)
         {
             graph.printConnections(from, window);
             window.draw(menuButton);
         }
-
         else if(screen==4)
         {
             window.draw(nameInput);
@@ -413,6 +463,7 @@ int main()
             window.draw(menuButton);
             window.draw(nameText);
             window.draw(companyText);
+
             if (toInsert) {
                 bool insertVal = graph.insertConnection(from, Person(userInputname,userInputcompany));
                 if (insertVal)
@@ -421,10 +472,96 @@ int main()
                     insert = 2;
                 toInsert = false;
             }
-            if (insert == 1)
+
+            if(insert==1)
+            {
                 window.draw(success);
-            else if (insert == 2)
+            }
+            else if(insert==2)
+            {
                 window.draw(failed);
+            }
+        }
+        else if(screen==5)
+        {
+            window.draw(companyAsk);
+            window.draw(pathQ);
+            window.draw(companyText2);
+
+            if (finishedComp== true && menu==3)
+            {
+                screen=6;
+            }
+            else if(finishedComp== true && menu==4)
+            {
+                screen=7;
+            }
+
+
+        }
+        else if(screen==6)
+        {
+            //breadth first
+            window.clear();
+            string company= userInputCompany2;
+
+            sf::Font font;
+            font.loadFromFile("Font/arial.ttf");
+            if(!font.loadFromFile("Font/arial.ttf"))
+            {
+                cout<< "ERROR IN FONT" << endl;
+            }
+
+            window.draw(border);
+            sf::Text text;
+            text.setFont(font);
+            text.setCharacterSize(70);
+            text.setFillColor(sf::Color::White);
+            text.setString("The BFS path from you to "+ company+ " is:");
+            text.setPosition(560,100);
+            window.draw(text);
+            window.draw(menuButton);
+
+            cout<< from.name<< " "<< from.company<< endl;
+            company.erase(company.size()-1);
+
+
+            vector<string> connections = graph.BreadthFirstSearch(from, company);
+            cout << "The SHORTEST path from you to " << company << ": " << endl;
+            for (auto i: connections) {
+                cout << i << endl;
+            }
+
+            screen=1;
+
+        }
+        else if(screen==7)
+        {
+            //depth first
+            window.draw(menuButton);
+            string company=userInputCompany2;
+            vector<string> connections = graph.DepthFirstSearch(from, company);
+            /*cout << "Your path of connections to " << company << ": " << endl;
+            for (auto i: connections) {
+                cout << i << endl;
+            }*/
+
+
+/*/
+           sf::Font font;
+            font.loadFromFile("Font/arial.ttf");
+
+            sf::Text text;
+            text.setFont(font);
+            text.setCharacterSize(20);
+            text.setFillColor(sf::Color::White);
+
+
+            string message= graph[from].at(i).name+"-- "+graph[from].at(i).company;
+            text.setString(message);
+            text.setPosition(j,m*22);
+            window.draw(text);*/
+
         }
 
         font.loadFromFile("Font/arial.ttf");
@@ -440,7 +577,7 @@ int main()
                 window.close();
 
             if (event.type==sf::Event::TextEntered) {
-                if (event.text.unicode < 128) {
+                if (event.text.unicode < 128 && screen==4) {
                     if (event.text.unicode == 10 && !nameInputted) {
                         nameInputted = true;
                     }
@@ -463,62 +600,67 @@ int main()
                     /*char inputVal = static_cast<char>(event.text.unicode);
                     cout << inputVal << "it worked";*/
                 }
+                if (event.text.unicode < 128 && screen==5)
+                {
+                    //need bool outside of loop, return true if hit enter
+                    userInputCompany2 +=event.text.unicode;
+                    companyText2.setString(userInputCompany2);
+                    if (event.text.unicode == 10)
+                    {
+                        finishedComp= true;
+                    }
+                }
             }
 
-            if (event.type== sf::Event::MouseButtonPressed)
-            {
-                if (event.mouseButton.button == sf::Mouse::Left || event.mouseButton.button == sf::Mouse::Right)
-                {
+            if (event.type== sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left || event.mouseButton.button == sf::Mouse::Right) {
                     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
                     auto boundsCamille = camille.getGlobalBounds();
-                    if(boundsCamille.contains(mousePos.x, mousePos.y))
-                    {
-                        from.name= "Camille Eyman";
-                        from.company= "UF Center for Arts in Medicine";
+                    if (boundsCamille.contains(mousePos.x, mousePos.y) && screen==2) {
+                        from.name = "Camille Eyman";
+                        from.company = "UF Center for Arts in Medicine";
 
-                        if(menu==1)
-                        {
-                            screen=3;
-                        }
-                        else if (menu==2) {
-                            screen=4;
+                        if (menu == 1) {
+                            screen = 3;
+                        } else if (menu == 2) {
+                            screen = 4;
+                        } else {
+                            screen = 5;
                         }
                     }
 
                     auto boundsNathalie = nathalie.getGlobalBounds();
-                    if(boundsNathalie.contains(mousePos.x, mousePos.y))
-                    {
-                        from.name= "Nathalie Leave";
-                        from.company= "Microsoft";
+                    if (boundsNathalie.contains(mousePos.x, mousePos.y) && screen==2) {
+                        from.name = "Nathalie Leave";
+                        from.company = "Microsoft";
 
-                        if(menu==1)
-                        {
-                            screen=3;
-                        }
-                        else if (menu==2) {
-                            screen=4;
+                        if (menu == 1) {
+                            screen = 3;
+                        } else if (menu == 2) {
+                            screen = 4;
+                        } else {
+                            screen = 5;
                         }
                     }
 
                     auto boundsCathy = cathy.getGlobalBounds();
-                    if(boundsCathy.contains(mousePos.x, mousePos.y))
-                    {
-                        from.name= "Catherine Pham";
-                        from.company= "University of Florida";
-                        if(menu==1)
-                        {
-                            screen=3;
-                        }
-                        else if (menu==2) {
-                            screen=4;
+                    if (boundsCathy.contains(mousePos.x, mousePos.y) && screen==2) {
+                        from.name = "Catherine Pham";
+                        from.company = "University of Florida";
+                        if (menu == 1) {
+                            screen = 3;
+                        } else if (menu == 2) {
+                            screen = 4;
+                        } else {
+                            screen = 5;
                         }
                     }
 
                     auto boundsMenu = menuButton.getGlobalBounds();
-                    if(boundsMenu.contains(mousePos.x, mousePos.y))
-                    {
-                        screen=1;
+                    if (boundsMenu.contains(mousePos.x, mousePos.y)) {
+                        screen = 1;
+                        insertResult = 0;
                     }
 
                     auto option1Bounds = option1.getGlobalBounds();
@@ -526,25 +668,25 @@ int main()
                     auto option3Bounds = option3.getGlobalBounds();
                     auto option4Bounds = option4.getGlobalBounds();
 
-                    if (option1Bounds.contains(mousePos.x, mousePos.y)) {
-                        menu=1;
-                        screen=2;
-                    }
-                    else if (option2Bounds.contains(mousePos.x, mousePos.y)) {
-                        menu=2;
-                        screen=2;
-                    }
-                    else if (option3Bounds.contains(mousePos.x, mousePos.y)) {
-                        menu=3;
-                        screen=2;
-                    }
-                    else if (option4Bounds.contains(mousePos.x, mousePos.y)) {
-                        menu=4;
+                    if (option1Bounds.contains(mousePos.x, mousePos.y) && screen==1) {
+                        menu = 1;
+                        screen = 2;
+                    } else if (option2Bounds.contains(mousePos.x, mousePos.y) && screen==1) {
+                        menu = 2;
+                        screen = 2;
+                    } else if (option3Bounds.contains(mousePos.x, mousePos.y) && screen==1) {
+                        menu = 3;
+                        screen = 2;
+                    } else if (option4Bounds.contains(mousePos.x, mousePos.y) && screen==1) {
+                        menu = 4;
+                        screen = 2;
                     }
 
                 }
             }
         }
+
+
         window.display();
         window.clear();
 
@@ -556,6 +698,14 @@ int main()
 
 
     ///END OF SFML SECTION!!
+
+
+
+
+
+
+
+
 
 
     //it isn't allowing you to choose a different menu option
