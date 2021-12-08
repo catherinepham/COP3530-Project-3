@@ -195,9 +195,10 @@ vector<string> Graph:: DepthFirstSearch(Person from, string company)
             return connectionsPath;
         }
 
-        vector<Person> connections = graph[from];
+        vector<Person> connections = graph[person1];
         for(Person v: connections)
         {
+
             if(visited.count(v) == 0)
             {
                 visited.insert(v);
@@ -240,7 +241,7 @@ int main()
 
     Graph graph;
     vector<Person> people;
-    string filePath= "Test1.csv";
+    string filePath= "MassiveConnections.csv";
     ifstream File(filePath);
 
     if(File.is_open())
@@ -338,6 +339,10 @@ int main()
     cathyName.setScale(0.6,0.6);
     cathyName.setPosition(1830, 140);
 
+   // sf:: Sprite otherNetwork(TextureManager::GetTexture("otherNetwork"));
+    //otherNetwork.setScale(0.6,0.6);
+    //otherNetwork.setPosition(500, 600);
+
     sf:: Sprite question(TextureManager::GetTexture("question"));
     question.setPosition(465, 10);
 
@@ -370,6 +375,11 @@ int main()
     nameInput.setPosition(200,570);
     sf:: Sprite companyInput(TextureManager::GetTexture("companyInput"));
     companyInput.setPosition(100,870);
+
+    sf:: Sprite nameInput2(TextureManager::GetTexture("nameInput"));
+    nameInput2.setPosition(180,1070);
+    sf:: Sprite companyInput2(TextureManager::GetTexture("companyInput"));
+    companyInput2.setPosition(150,1270);
 
     sf:: Sprite titleInput(TextureManager::GetTexture("titleInput"));
     titleInput.setPosition(320,50);
@@ -411,6 +421,20 @@ int main()
     bool toInsert = false;
     int insert = 0;
 
+    sf::String networkName;
+    sf::String networkCompany;
+    sf::Text netNameText("", font, 75);
+    netNameText.setFont(font);
+    netNameText.setPosition(600,1110);
+    netNameText.setColor(sf::Color::White);
+    sf::Text netCompanyText("", font, 75);
+    netCompanyText.setFont(font);
+    netCompanyText.setPosition(740,1330);
+    netCompanyText.setColor(sf::Color::White);
+
+    bool netNameInputted = false;
+    bool netCompanyInputted = false;
+
     sf::String userInputCompany2;
     sf::String userText2;
     sf::Text companyText2("", font, 75);
@@ -426,6 +450,20 @@ int main()
     {
         if(screen==1)
         {
+            userInputname="";
+            userInputcompany="";
+            userInputCompany2="";
+            userText2="";
+            nameText.setString(userInputname);
+            companyText.setString(userInputcompany);
+            companyText2.setString(userInputCompany2);
+
+            bool nameInputted = false;
+            bool companyInputted = false;
+            bool toInsert = false;
+            bool finishedComp= false;
+            int insert = 0;
+
             window.draw(title);
             window.draw(directions);
             window.draw(option1);
@@ -441,6 +479,11 @@ int main()
             window.draw(camilleName);
             window.draw(nathalieName);
             window.draw(cathyName);
+            window.draw(nameInput2);
+            window.draw(companyInput2);
+            window.draw(netCompanyText);
+            window.draw(netNameText);
+
             if(menu==2)
             {
                 window.draw(insertQ);
@@ -541,14 +584,13 @@ int main()
             window.draw(menuButton);
             string company=userInputCompany2;
             vector<string> connections = graph.DepthFirstSearch(from, company);
-            /*cout << "Your path of connections to " << company << ": " << endl;
+            cout << "Your path of connections to " << company << ": " << endl;
             for (auto i: connections) {
                 cout << i << endl;
-            }*/
+            }
 
-
-/*/
-           sf::Font font;
+            /*
+            sf::Font font;
             font.loadFromFile("Font/arial.ttf");
 
             sf::Text text;
@@ -560,8 +602,8 @@ int main()
             string message= graph[from].at(i).name+"-- "+graph[from].at(i).company;
             text.setString(message);
             text.setPosition(j,m*22);
-            window.draw(text);*/
-
+            window.draw(text);
+*/
         }
 
         font.loadFromFile("Font/arial.ttf");
@@ -577,6 +619,33 @@ int main()
                 window.close();
 
             if (event.type==sf::Event::TextEntered) {
+                if (event.text.unicode < 128 && screen==2)
+                {
+                    if (event.text.unicode == 10 && !netNameInputted) {
+                        netNameInputted = true;
+                    }
+                    else if(event.text.unicode == 10 && netNameInputted && !netCompanyInputted) {
+                        netCompanyInputted = true;
+                    }
+                    else if (!netNameInputted && !netCompanyInputted) {
+                        networkName +=event.text.unicode;
+                        netNameText.setString(networkName);
+                    }
+                    else if (netNameInputted && !netCompanyInputted) {
+                        networkCompany +=event.text.unicode;
+                        netCompanyText.setString(networkCompany);
+                    }
+                    else if (netNameInputted && netCompanyInputted){
+                        from = Person(networkName, networkCompany);
+                        if (menu == 1) {
+                            screen = 3;
+                        } else if (menu == 2) {
+                            screen = 4;
+                        } else {
+                            screen = 5;
+                        }
+                    }
+                }
                 if (event.text.unicode < 128 && screen==4) {
                     if (event.text.unicode == 10 && !nameInputted) {
                         nameInputted = true;
@@ -595,10 +664,6 @@ int main()
                     else if (nameInputted && companyInputted){
                         toInsert = true;
                     }
-
-
-                    /*char inputVal = static_cast<char>(event.text.unicode);
-                    cout << inputVal << "it worked";*/
                 }
                 if (event.text.unicode < 128 && screen==5)
                 {
@@ -610,6 +675,7 @@ int main()
                         finishedComp= true;
                     }
                 }
+
             }
 
             if (event.type== sf::Event::MouseButtonPressed) {
